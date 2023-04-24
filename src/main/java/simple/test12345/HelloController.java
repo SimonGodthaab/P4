@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -62,18 +63,26 @@ public class HelloController {
         stage.close();
     }
 
-    public boolean validateLogin(){
+    public boolean validateLogin() {
+         PreparedStatement stmt = null;
          dataBaseConnection connectNow = new dataBaseConnection();
          Connection connectDB = connectNow.getConnection();
 
-         String verifyLogin = "Select count(1) From useraccounts Where Binary username = '" + usernameBox.getText() + "' AND Binary password = '" + passwordBox.getText() + "'";
-       System.out.println("***"+usernameBox.getText()+"***");
+         String verifyLogin = "Select count(1) From useraccounts Where Binary username = ? AND Binary password = ? ";
+
+        System.out.println("***"+usernameBox.getText()+"***");
         System.out.println("***"+passwordBox.getText()+"***");
         System.out.println(verifyLogin);
 
         try {
-            Statement statement = connectDB.createStatement();
-            ResultSet databaseResult = statement.executeQuery(verifyLogin);
+            stmt = connectDB.prepareStatement(verifyLogin);
+            stmt.setString(1, usernameBox.getText());
+            stmt.setString(2, passwordBox.getText());
+            ResultSet databaseResult = stmt.executeQuery();
+
+
+            //Statement statement = connectDB.createStatement();
+            //ResultSet databaseResult = statement.executeQuery(verifyLogin);
             /*System.out.println(databaseResult.getFetchSize());*/
 
             while (databaseResult.next())
@@ -95,12 +104,12 @@ public class HelloController {
         return false;
 
     }
-    public void logoutButtonOnAction(ActionEvent e) throws IOException {
+    /*public void logoutButtonOnAction(ActionEvent e) throws IOException {
                 searchSite = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
                 stage = (Stage)((Node)e.getSource()).getScene().getWindow();
                 scene = new Scene(searchSite);
                 stage.setScene(scene);
-                stage.show();            }
+                stage.show();           }*/
 
         }
 
