@@ -12,7 +12,7 @@
             <Font size="16.0" />
          </font>
       </TextField>
-      <Button fx:id="logoutButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutButtonOnAction" text="Log Out" />
+      <Button fx:id="logoutButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Log Out" />
       <Button fx:id="searchButton" layoutX="97.0" layoutY="200.0" mnemonicParsing="false" text="Search" />
    </children>
 </AnchorPane>
