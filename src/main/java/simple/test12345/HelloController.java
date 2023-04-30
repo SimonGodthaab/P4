@@ -1,28 +1,33 @@
 package simple.test12345;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.TableView;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.net.URL;
+import java.sql.*;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
-public class HelloController {
+public class HelloController  {
     @FXML
     private Label welcomeText;
     @FXML
@@ -36,42 +41,44 @@ public class HelloController {
     @FXML
     private PasswordField passwordBox;
     @FXML
+    private TextField searchField;
+    @FXML
     private Button logoutButton;
     private Stage stage;
     private Scene scene;
     private Parent searchSite;
 
 
-     public void loginButtonOnAction(ActionEvent e) throws IOException {
+    public void loginButtonOnAction(ActionEvent e) throws IOException {
 
-        if(usernameBox.getText().isBlank() == false && passwordBox.getText().isBlank() == false){
+        if (usernameBox.getText().isBlank() == false && passwordBox.getText().isBlank() == false) {
             if (validateLogin()) {
                 searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
-                stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+                stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
                 scene = new Scene(searchSite);
                 stage.setScene(scene);
-                stage.show();    }
+                stage.show();
+            }
             //validateLogin();
-        }
-        else{
-            messageLabel.setText("Fill out the login infomation!");
+        } else {
+            messageLabel.setText("Fill out the login information!");
         }
     }
 
-    public void cancelButtonOnAction(ActionEvent e){
+    public void cancelButtonOnAction(ActionEvent e) {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
     public boolean validateLogin() {
-         PreparedStatement stmt = null;
-         dataBaseConnection connectNow = new dataBaseConnection();
-         Connection connectDB = connectNow.getConnection();
+        PreparedStatement stmt = null;
+        dataBaseConnection connectNow = new dataBaseConnection();
+        Connection connectDB = connectNow.getConnection();
 
-         String verifyLogin = "Select count(1) From useraccounts Where Binary username = ? AND Binary password = ? ";
+        String verifyLogin = "Select count(1) From useraccounts Where Binary username = ? AND Binary password = ? ";
 
-        System.out.println("***"+usernameBox.getText()+"***");
-        System.out.println("***"+passwordBox.getText()+"***");
+        System.out.println("***" + usernameBox.getText() + "***");
+        System.out.println("***" + passwordBox.getText() + "***");
         System.out.println(verifyLogin);
 
         try {
@@ -87,30 +94,24 @@ public class HelloController {
 
             while (databaseResult.next())
                 //System.out.println(databaseResult.getInt(1));
-                if(databaseResult.getInt(1) ==1){
+                if (databaseResult.getInt(1) == 1) {
                     messageLabel.setText("Logged in :-)");
                     return true;
-                }
-                else{
+                } else {
                     messageLabel.setText("*Beep!* Wrong Username or Password!");
                     return false;
                 }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
-            }
+        }
         return false;
 
     }
-    /*public void logoutButtonOnAction(ActionEvent e) throws IOException {
-                searchSite = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
-                stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-                scene = new Scene(searchSite);
-                stage.setScene(scene);
-                stage.show();           }*/
 
-        }
+
+
+}
 
 
