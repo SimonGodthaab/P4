@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -32,11 +31,10 @@ public class Searchcontroller implements Initializable {
 
     @FXML
     private TextField searchField;
-    @FXML
-    private Button logoutButton;
     private Stage stage;
     private Scene scene;
     private Parent searchSite;
+    // logout action
     public void logoutButtonOnAction(ActionEvent e) throws IOException {
         searchSite = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
@@ -53,9 +51,10 @@ public class Searchcontroller implements Initializable {
     private TableColumn<SearchApplication, String> carModel;
     @FXML
     private TableColumn<SearchApplication, Double> carPrice;
-
+    // Makes an Observable list
     ObservableList<SearchApplication> SearchApplicationObservableList = FXCollections.observableArrayList();
 
+    // makes an connection with database and uses a SQL statement to take idCars, cb, cm and Price which uses forgein keys.
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -66,8 +65,8 @@ public class Searchcontroller implements Initializable {
                 "where c.carBrand_Id = cb.Id \n" +
                 "and c.carModel_Id = cm.Id";
         try {
-            Statement statement = connectDB.createStatement();
-            ResultSet queryOutput = statement.executeQuery(searchQuery);
+            Statement dbStatement = connectDB.createStatement();
+            ResultSet queryOutput = dbStatement.executeQuery(searchQuery);
 
             while (queryOutput.next()){
                 String carBrand = queryOutput.getString("cb.Name");
