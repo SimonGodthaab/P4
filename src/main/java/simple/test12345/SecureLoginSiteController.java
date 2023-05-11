@@ -48,7 +48,7 @@ public class SecureLoginSiteController {
                 stage.setScene(scene);
                 stage.show();
             }
-            //validateLogin();
+            
         } else {
             messageLabel.setText("Fill out the login information!");
         }
