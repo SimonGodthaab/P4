@@ -8,12 +8,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import simple.test12345.Util.MailHandler;
-import simple.test12345.Util.OtpGen;
 
 import java.io.IOException;
 import java.sql.*;
-public class SecureLoginSiteController  {
+
+
+public class SecureLoginSiteController {
+    @FXML
+    private Label welcomeText;
+    @FXML
+    private Button loginButton;
     @FXML
     private Button cancelButton;
     @FXML
@@ -23,25 +27,33 @@ public class SecureLoginSiteController  {
     @FXML
     private PasswordField passwordBox;
     @FXML
-    private TextField otpBox;
+    private TextField searchField;
+    @FXML
+    private Button logoutButton;
     private Stage stage;
     private Scene scene;
     private Parent searchSite;
-    private String otpToken;
-    private String username;
+
+    private Parent signup;
+
+
+
     public void loginButtonOnAction(ActionEvent e) throws IOException {
 
         if (usernameBox.getText().isBlank() == false && passwordBox.getText().isBlank() == false) {
             if (validateLogin()) {
-                otpToken = OtpGen.otpCode();
-
-                MailHandler.send(otpToken, username);
+                searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
+                stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+                scene = new Scene(searchSite);
+                stage.setScene(scene);
+                stage.show();
             }
-
+            //validateLogin();
         } else {
             messageLabel.setText("Fill out the login information!");
         }
     }
+
     public void cancelButtonOnAction(ActionEvent e) {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
@@ -53,7 +65,10 @@ public class SecureLoginSiteController  {
         Connection connectDB = connectNow.getConnection();
 
         String verifyLogin = "Select count(1) From useraccounts Where Binary username = ? AND Binary password = ? ";
-        username = usernameBox.getText();
+
+        System.out.println("***" + usernameBox.getText() + "***");
+        System.out.println("***" + passwordBox.getText() + "***");
+        System.out.println(verifyLogin);
 
         try {
             stmt = connectDB.prepareStatement(verifyLogin);
@@ -61,9 +76,15 @@ public class SecureLoginSiteController  {
             stmt.setString(2, passwordBox.getText());
             ResultSet databaseResult = stmt.executeQuery();
 
+
+            //Statement statement = connectDB.createStatement();
+            //ResultSet databaseResult = statement.executeQuery(verifyLogin);
+            /*System.out.println(databaseResult.getFetchSize());*/
+
             while (databaseResult.next())
+                //System.out.println(databaseResult.getInt(1));
                 if (databaseResult.getInt(1) == 1) {
-                    messageLabel.setText("OTP token sent :-)");
+                    messageLabel.setText("Logged in :-)");
                     return true;
                 } else {
                     messageLabel.setText("*Beep!* Wrong Username or Password!");
@@ -78,23 +99,76 @@ public class SecureLoginSiteController  {
 
     }
 
-    public void authorizeButtonOnAction(ActionEvent e) throws IOException {
+    public static void signUpUser(ActionEvent event, String username, String password) {
+        Connection connection = null;
+        PreparedStatement psInsert = null;
+        PreparedStatement psCheckUser = null;
+        ResultSet resultSet = null;
 
-        if (otpToken == null){
-            messageLabel.setText("Please log in");
-        }
-        else if (otpToken.compareTo(otpBox.getText()) == 0) {
-                System.out.println("OTP Token: "+otpToken);
-                searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
-                stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-                scene = new Scene(searchSite);
-                stage.setScene(scene);
-                stage.show();
-        }
-        else
-            messageLabel.setText("Invalid Token");
 
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/database", "root", "root");
+            psCheckUser = connection.prepareStatement("SELECT * FROM useraccounts WHERE username = ?");
+            psCheckUser.setString(1, username);
+            resultSet = psCheckUser.executeQuery();
+
+            if (resultSet.isBeforeFirst()) {
+                System.out.println("User already exists!");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Username invalid!");
+                alert.show();
+            } else {
+                psInsert = connection.prepareStatement("INSERT INTO useraccounts (username, password) VALUES (?,?);");
+                psInsert.setString(1, username);
+                psInsert.setString(2, password);
+                psInsert.executeUpdate();
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+
+                }
+            }
+            if (psCheckUser != null) {
+                try {
+                    psCheckUser.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psInsert != null) {
+                try {
+                    psInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+
+        }
+    }
+    public void signUpSiteAction (ActionEvent e) throws IOException{
+    signup = FXMLLoader.load(getClass().getResource("signup.fxml"));
+    stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+    scene = new Scene(signup);
+    stage.setScene(scene);
+    stage.show();
     }
 }
-
-

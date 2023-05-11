@@ -1,6 +1,8 @@
 package simple.test12345;
 
 public class SearchApplication {
+
+
     String carBrand, carModel;
     Double Price;
 

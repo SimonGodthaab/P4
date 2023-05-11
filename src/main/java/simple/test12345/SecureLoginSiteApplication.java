@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
+// Application for the login site
 public class SecureLoginSiteApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
