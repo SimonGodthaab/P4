@@ -10,12 +10,12 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simple.test12345.SecureLoginSiteController">
    <children>
-      <Button fx:id="loginBox" layoutX="418.0" layoutY="220.0" mnemonicParsing="false" onAction="#loginButtonOnAction" text="Login" />
+      <Button fx:id="loginBox" layoutX="442.0" layoutY="212.0" mnemonicParsing="false" onAction="#loginButtonOnAction" text="Login" />
       <Label layoutX="297.0" layoutY="155.0" prefHeight="17.0" prefWidth="88.0" text="Username" />
       <Label layoutX="297.0" layoutY="183.0" prefHeight="17.0" prefWidth="88.0" text="Password" />
       <TextField fx:id="usernameBox" layoutX="390.0" layoutY="151.0" />
       <PasswordField fx:id="passwordBox" layoutX="390.0" layoutY="179.0" />
-      <AnchorPane opacity="0.67" prefHeight="400.0" prefWidth="277.0" style="-fx-background-color: #AF1FB8;">
+      <AnchorPane opacity="0.67" prefHeight="400.0" prefWidth="280.0" style="-fx-background-color: #AF1FB8;">
          <children>
             <Label alignment="CENTER" layoutX="64.0" layoutY="26.0" opacity="0.56" prefHeight="17.0" prefWidth="149.0" text="P4" textFill="WHITE">
                <font>
@@ -24,7 +24,6 @@
             </Label>
          </children>
       </AnchorPane>
-      <Button fx:id="cancelButton" layoutX="482.0" layoutY="220.0" mnemonicParsing="false" onAction="#cancelButtonOnAction" prefHeight="25.0" prefWidth="57.0" text="Cancel" />
       <Label alignment="CENTER" layoutX="284.0" layoutY="54.0" prefHeight="59.0" prefWidth="313.0" text="Secure Login Site">
          <font>
             <Font size="26.0" />
@@ -34,11 +33,17 @@
          </effect>
       </Label>
       <Label fx:id="messageLabel" alignment="CENTER" layoutX="279.0" layoutY="124.0" prefHeight="17.0" prefWidth="319.0" />
-      <TextField fx:id="otpBox" layoutX="291.0" layoutY="267.0" prefHeight="17.0" prefWidth="100.0" promptText="OTP Token" />
-      <Button fx:id="authorize" layoutX="413.0" layoutY="269.0" mnemonicParsing="false" onAction="#authorizeButtonOnAction" prefHeight="21.0" prefWidth="57.0" text="Authorize">
+      <TextField fx:id="otpBox" layoutX="415.0" layoutY="266.0" prefHeight="17.0" prefWidth="100.0" promptText="OTP Token" />
+      <Button fx:id="authorize" layoutX="436.0" layoutY="302.0" mnemonicParsing="false" onAction="#authorizeButtonOnAction" prefHeight="21.0" prefWidth="57.0" text="Authorize">
          <font>
             <Font size="10.0" />
          </font>
       </Button>
+      <Button fx:id="bt_signup" layoutX="436.0" layoutY="352.0" mnemonicParsing="false" onAction="#signUpSiteAction" prefHeight="21.0" prefWidth="57.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Sign up!" textFill="#0606ff" underline="true">
+         <font>
+            <Font name="Arial" size="11.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="353.0" layoutY="354.0" prefHeight="17.0" prefWidth="88.0" text="Not a user?" />
    </children>
 </AnchorPane>

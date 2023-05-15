@@ -7,7 +7,6 @@ public class OtpGen {
         otp = Math.random();
         otp = otp * 1000000;
         int token = (int) otp;
-        System.out.println(token);
 
         return String.format("%06d",token);
     }
