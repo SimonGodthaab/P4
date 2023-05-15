@@ -13,7 +13,15 @@ import simple.test12345.Util.OtpGen;
 
 import java.io.IOException;
 import java.sql.*;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 public class SecureLoginSiteController  {
+
+
     @FXML
     private Button cancelButton;
     @FXML
@@ -47,37 +55,62 @@ public class SecureLoginSiteController  {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
+    private String decrypt(String encryptedData, String key) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
+        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
+    }
 
     public boolean validateLogin() {
         PreparedStatement stmt = null;
         dataBaseConnection connectNow = new dataBaseConnection();
         Connection connectDB = connectNow.getConnection();
 
-        String verifyLogin = "Select count(1) From useraccounts Where Binary username = ? AND Binary password = ? ";
+        String verifyLogin = "SELECT password FROM useraccounts WHERE Binary username = ?";
         username = usernameBox.getText();
 
         try {
             stmt = connectDB.prepareStatement(verifyLogin);
             stmt.setString(1, usernameBox.getText());
-            stmt.setString(2, passwordBox.getText());
             ResultSet databaseResult = stmt.executeQuery();
 
-            while (databaseResult.next())
-                if (databaseResult.getInt(1) == 1) {
+            if (databaseResult.next()) {
+                String storedPassword = databaseResult.getString("password");
+                String enteredPassword = passwordBox.getText();
+                String decryptedPassword = decrypt(storedPassword, "841rd57qrstvrs76");
+
+                if (decryptedPassword.equals(enteredPassword)) {
                     messageLabel.setText("OTP token sent :-)");
                     return true;
                 } else {
                     messageLabel.setText("*Beep!* Wrong Username or Password!");
                     return false;
                 }
-
+            } else {
+                messageLabel.setText("*Beep!* Wrong Username or Password!");
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-
+        } finally {
+            // Close resources
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connectDB != null) {
+                    connectDB.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
-
     }
+
 
     public void authorizeButtonOnAction(ActionEvent e) throws IOException {
 
@@ -85,12 +118,12 @@ public class SecureLoginSiteController  {
             messageLabel.setText("Please log in");
         }
         else if (otpToken.compareTo(otpBox.getText()) == 0) {
-                System.out.println("OTP Token: "+otpToken);
-                searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
-                stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-                scene = new Scene(searchSite);
-                stage.setScene(scene);
-                stage.show();
+            System.out.println("OTP Token: "+otpToken);
+            searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
+            stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            scene = new Scene(searchSite);
+            stage.setScene(scene);
+            stage.show();
         }
         else
             messageLabel.setText("Invalid Token");
@@ -103,15 +136,14 @@ public class SecureLoginSiteController  {
         stage.setScene(scene);
         stage.show();
     }
-    public static void signUpUser(ActionEvent event, String username, String password) {
+    public static void signUpUser(ActionEvent event, String username, String encryptedPassword, String secretKey) {
         Connection connection = null;
         PreparedStatement psInsert = null;
         PreparedStatement psCheckUser = null;
         ResultSet resultSet = null;
 
-
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/database", "root", "root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/car", "root", "Cheema90");
             psCheckUser = connection.prepareStatement("SELECT * FROM useraccounts WHERE username = ?");
             psCheckUser.setString(1, username);
             resultSet = psCheckUser.executeQuery();
@@ -124,9 +156,8 @@ public class SecureLoginSiteController  {
             } else {
                 psInsert = connection.prepareStatement("INSERT INTO useraccounts (username, password) VALUES (?,?);");
                 psInsert.setString(1, username);
-                psInsert.setString(2, password);
+                psInsert.setString(2, encryptedPassword);
                 psInsert.executeUpdate();
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
