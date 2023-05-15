@@ -5,6 +5,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 
 public class dataBaseConnection {
+    //Makes connection to your database
     public Connection databaseLink;
 
     public Connection getConnection(){
