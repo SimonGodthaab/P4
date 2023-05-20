@@ -117,16 +117,15 @@ public class SecureLoginSiteController  {
             scene = new Scene(searchSite);
             stage.setScene(scene);
             stage.show();
-        } else {
-            while (otpToken.equals(otpBox.getText()) == false) {
+          } else {
                     messageLabel.setText("Invalid Token");
                     i++;
                     System.out.println(i);
-                    break;
-            }
+
                 if (i == 3){
                     otpToken = null;
                     i = 0;
+                    messageLabel.setText("Number of retries exceeded. Please login again");
                 }
         }
     }
