@@ -31,10 +31,10 @@ public class SecureLoginSiteController  {
     private String otpToken;
     private String username;
     private Parent signup;
-
+    private int i = 0;
 
     private boolean emailValidate(){
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
         Matcher matcher = pattern.matcher(usernameBox.getText());
         if (matcher.find() && matcher.group().equals(usernameBox.getText())){
             return true;
@@ -85,7 +85,8 @@ public class SecureLoginSiteController  {
                     return true;
                 }
                 else
-                    return false;
+                    messageLabel.setText("Invaild Account infomation");
+                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,21 +108,27 @@ public class SecureLoginSiteController  {
 
 
     public void authorizeButtonOnAction(ActionEvent e) throws IOException {
-
-        if (otpToken == null){
+        if (otpToken == null) {
             messageLabel.setText("Please log in");
-        }
-        else if (otpToken.compareTo(otpBox.getText()) == 0) {
-            System.out.println("OTP Token: "+otpToken);
+        } else if (otpToken.compareTo(otpBox.getText()) == 0) {
+            System.out.println("OTP Token: " + otpToken);
             searchSite = FXMLLoader.load(getClass().getResource("searchBar.fxml"));
             stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             scene = new Scene(searchSite);
             stage.setScene(scene);
             stage.show();
+        } else {
+            while (otpToken.equals(otpBox.getText()) == false) {
+                    messageLabel.setText("Invalid Token");
+                    i++;
+                    System.out.println(i);
+                    break;
+            }
+                if (i == 3){
+                    otpToken = null;
+                    i = 0;
+                }
         }
-        else
-            messageLabel.setText("Invalid Token");
-
     }
     public void signUpSiteAction (ActionEvent e) throws IOException{
         signup = FXMLLoader.load(getClass().getResource("signup.fxml"));

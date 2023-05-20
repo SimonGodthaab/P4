@@ -28,7 +28,7 @@ public class Signupcontroller {
     private Parent login;
 
     private boolean emailValidate(){
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
         Matcher matcher = pattern.matcher(tf_username.getText());
         if (matcher.find() && matcher.group().equals(tf_username.getText())){
             return true;
