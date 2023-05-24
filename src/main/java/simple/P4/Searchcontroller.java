@@ -60,7 +60,7 @@ public class Searchcontroller implements Initializable {
             Statement dbStatement = connectDB.createStatement();
             ResultSet queryOutput = dbStatement.executeQuery(searchQuery);
 
-            while (queryOutput.next()){
+            while (queryOutput.next()) {
                 String carBrand = queryOutput.getString("cb.Name");
                 String carModel = queryOutput.getString("cm.Name");
                 Double carPrice = queryOutput.getDouble("c.Price");
@@ -74,18 +74,19 @@ public class Searchcontroller implements Initializable {
 
             FilteredList<SearchApplication> filteredData = new FilteredList<>(SearchApplicationObservableList, b -> true);
 
-            searchField.textProperty().addListener((observable, oldValue, newValue )-> {
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(SearchApplication -> {
-                    if (newValue.isEmpty() || newValue.isBlank() || newValue == null){
+                    if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
                         return true;
                     }
                     String searchKeyword = newValue.toLowerCase();
 
-                    if (SearchApplication.getCarBrand().toLowerCase().indexOf(searchKeyword) > -1){
+                    if (SearchApplication.getCarBrand().toLowerCase().indexOf(searchKeyword) > -1) {
                         return true;
                     } else if (SearchApplication.getCarModel().toLowerCase().indexOf(searchKeyword) > -1) {
                         return true;
-                    } return false;
+                    }
+                    return false;
 
                 });
             });
@@ -95,13 +96,14 @@ public class Searchcontroller implements Initializable {
 
             tabel.setItems(sortedData);
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             Logger.getLogger(SearchApplication.class.getName()).log(Level.SEVERE, null, e);
             e.printStackTrace();
 
         }
 
     }
+
     public void logoutButtonOnAction(ActionEvent e) throws IOException {
         searchSite = FXMLLoader.load(getClass().getResource("secureLoginSite.fxml"));
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();

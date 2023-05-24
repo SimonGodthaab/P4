@@ -17,5 +17,3 @@ insert into cars (idCars, carBrand_Id, carModel_Id, Price) values (4, 2, 4, 6000
 insert into cars (idCars, carBrand_Id, carModel_Id, Price) values (5, 3, 1, 7500000);
 
 Select * from cars;
-
-INSERT INTO useraccounts (username, password) VALUES ('p4otpauth@gmail.com', 'Root');

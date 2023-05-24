@@ -27,6 +27,8 @@ public class SignUpDbConnect {
                 psInsert.setString(1, username);
                 psInsert.setString(2, encryptedPassword);
                 psInsert.executeUpdate();
+
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

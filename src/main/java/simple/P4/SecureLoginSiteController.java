@@ -15,7 +15,7 @@ import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SecureLoginSiteController  {
+public class SecureLoginSiteController {
 
     @FXML
     private Label messageLabel;
@@ -33,16 +33,16 @@ public class SecureLoginSiteController  {
     private Parent signup;
     private int i = 0;
 
-    private boolean emailValidate(){
+    private boolean emailValidate() {
         Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
         Matcher matcher = pattern.matcher(usernameBox.getText());
-        if (matcher.find() && matcher.group().equals(usernameBox.getText())){
+        if (matcher.find() && matcher.group().equals(usernameBox.getText())) {
             return true;
-        }
-        else
+        } else
             return false;
 
     }
+
     public void loginButtonOnAction(ActionEvent e) throws IOException {
         if (emailValidate() == true) {
             if (usernameBox.getText().isBlank() == false && passwordBox.getText().isBlank() == false) {
@@ -52,11 +52,11 @@ public class SecureLoginSiteController  {
                     MailHandler.send(otpToken, username);
                 }
             }
-        } else
-        {
-         messageLabel.setText("Log In Failed!");
+        } else {
+            messageLabel.setText("Log In Failed!");
         }
     }
+
     private String decrypt(String encryptedData, String key) throws Exception {
         return Encryption.decryption(encryptedData, key);
     }
@@ -81,10 +81,9 @@ public class SecureLoginSiteController  {
                 String decryptedPassword = decrypt(storedPassword, "841rd57qrstvrs76");
 
                 if (decryptedPassword.equals(enteredPassword)) {
-                    messageLabel.setText("OTP token sent :-)");
+                    messageLabel.setText("OTP token sent to registered Email :-)");
                     return true;
-                }
-                else
+                } else
                     messageLabel.setText("Invaild Account infomation");
                 return false;
             }
@@ -117,30 +116,26 @@ public class SecureLoginSiteController  {
             scene = new Scene(searchSite);
             stage.setScene(scene);
             stage.show();
-          } else {
-                    messageLabel.setText("Invalid Token");
-                    i++;
-                    System.out.println(i);
+        } else {
+            i++;
+            messageLabel.setText("Invalid Token number of tries:" + i);
+            System.out.println(i);
 
-                if (i == 3){
-                    otpToken = null;
-                    i = 0;
-                    messageLabel.setText("Number of retries exceeded. Please login again");
-                }
+            if (i == 3) {
+                otpToken = null;
+                i = 0;
+                messageLabel.setText("Number of retries exceeded. Please login again");
+            }
         }
     }
-    public void signUpSiteAction (ActionEvent e) throws IOException{
+
+    public void signUpSiteAction(ActionEvent e) throws IOException {
         signup = FXMLLoader.load(getClass().getResource("signup.fxml"));
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         scene = new Scene(signup);
         stage.setScene(scene);
         stage.show();
     }
-    public static void signUpUser(ActionEvent event, String username, String encryptedPassword, String secretKey) {
-        SignUpDbConnect.signUpDbConnect(username, encryptedPassword);
-    }
-
-
 }
 
 

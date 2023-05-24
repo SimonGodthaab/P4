@@ -8,7 +8,7 @@ public class dataBaseConnection {
     //Makes connection to your database
     public Connection databaseLink;
 
-    public Connection getConnection(){
+    public Connection getConnection() {
         String databaseName = "database";
         String databaseUser = "root";
         String databasePassword = "root";
@@ -17,7 +17,7 @@ public class dataBaseConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             databaseLink = DriverManager.getConnection(url, databaseUser, databasePassword);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return databaseLink;
