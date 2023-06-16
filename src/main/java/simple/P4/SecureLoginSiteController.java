@@ -3,15 +3,20 @@ package simple.P4;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 import simple.P4.Util.*;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,13 +66,20 @@ public class SecureLoginSiteController {
         return Encryption.decryption(encryptedData, key);
     }
 
+    private String hashPassword(String password, byte[] salt) {
+        return Hashing.hashPassword(password, salt);
+    }
+
+    private byte[] generateSalt() {
+        return Hashing.generateSalt();
+    }
 
     public boolean validateLogin() {
         PreparedStatement stmt = null;
         dataBaseConnection connectNow = new dataBaseConnection();
         Connection connectDB = connectNow.getConnection();
 
-        String verifyLogin = "SELECT password FROM useraccounts WHERE Binary username = ?";
+        String verifyLogin = "SELECT password, salt FROM useraccounts WHERE Binary username = ?";
         username = usernameBox.getText();
 
         try {
@@ -77,15 +89,19 @@ public class SecureLoginSiteController {
 
             if (databaseResult.next()) {
                 String storedPassword = databaseResult.getString("password");
+                byte[] salt = databaseResult.getBytes("salt");
                 String enteredPassword = passwordBox.getText();
-                String decryptedPassword = decrypt(storedPassword, "841rd57qrstvrs76");
 
-                if (decryptedPassword.equals(enteredPassword)) {
+                // Hash the entered password with the retrieved salt
+                String hashedEnteredPassword = hashPassword(enteredPassword, salt);
+                // Compare the stored and hashed passwords
+                if (storedPassword.equals(hashedEnteredPassword)) {
                     messageLabel.setText("OTP token sent to registered Email :-)");
                     return true;
-                } else
-                    messageLabel.setText("Invaild Account infomation");
-                return false;
+                } else {
+                    messageLabel.setText("Invalid Account information");
+                    return false;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,7 +120,6 @@ public class SecureLoginSiteController {
         }
         return false;
     }
-
 
     public void authorizeButtonOnAction(ActionEvent e) throws IOException {
         if (otpToken == null) {
@@ -137,5 +152,3 @@ public class SecureLoginSiteController {
         stage.show();
     }
 }
-
-

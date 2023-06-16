@@ -6,16 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import simple.P4.Util.Encryption;
+import simple.P4.Util.Hashing;
 import simple.P4.Util.SignUpDbConnect;
 
-
 import java.io.IOException;
-import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +42,9 @@ public class Signupcontroller {
         return Encryption.encryption(data, key);
     }
 
+    private String hashPassword(String password, byte[] salt) {
+        return Hashing.hashPassword(password, salt);
+    }
 
     public void loginAction(ActionEvent e) throws IOException {
         login = FXMLLoader.load(getClass().getResource("secureLoginSite.fxml"));
@@ -54,11 +55,12 @@ public class Signupcontroller {
     }
 
     public void registerAction(ActionEvent event) {
-        if (emailValidate() == true) {
+        if (emailValidate()) {
             if (!tf_username.getText().trim().isEmpty() && !tf_password.getText().trim().isEmpty()) {
                 try {
-                    String encryptedPassword = encrypt(tf_password.getText(), "841rd57qrstvrs76");
-                    signUpUser(event, tf_username.getText(), encryptedPassword, "841rd57qrstvrs76");
+                    byte[] salt = Hashing.generateSalt();
+                    String hashedPassword = hashPassword(tf_password.getText(), salt);
+                    signUpUser(event, tf_username.getText(), hashedPassword, salt);
                 } catch (Exception e) {
                     System.out.println("Encryption failed: " + e.getMessage());
                 }
@@ -69,14 +71,8 @@ public class Signupcontroller {
         }
     }
 
-    public void signUpUser(ActionEvent event, String username, String encryptedPassword, String secretKey) {
-        SignUpDbConnect.signUpDbConnect(username, encryptedPassword);
-        registerLabel.setText("Registration sucessful!");
+    public void signUpUser(ActionEvent event, String username, String hashedPassword, byte[] salt) {
+        SignUpDbConnect.signUpDbConnect(username, hashedPassword, salt);
+        registerLabel.setText("Registration successful!");
     }
 }
-
-
-
-
-
-
